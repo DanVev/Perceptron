@@ -40,19 +40,19 @@ for n in range(len(tr_images)):
         resp[i] = r
 
     resp_cls = np.argmax(resp)
-    resp = np.zeros(10, dtype=np.float32)
-    resp[resp_cls] = 1.0
+    # resp = np.zeros(10, dtype=np.float32)
+    # resp[resp_cls] = 1.0
 
     # back propagation
     true_resp = np.zeros(10, dtype=np.float32)
     true_resp[cls] = 1.0
 
-    error = resp - true_resp
+    error = true_resp - resp
 
-    delta = error * ((resp >= 0) * np.ones(10))
+    delta = error * resp * (1 - resp)
     for i in range(0, 10):
-        w[i] -= np.dot(img, delta[i])
-        b[i] -= delta[i]
+        w[i] += np.dot(img, delta[i])
+    b += delta
 
 
 def nn_calculate(img):
