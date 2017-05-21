@@ -1,18 +1,19 @@
 import numpy as np
 from mnist import MNIST
+import os
 
 np.random.seed(1)
 IMAGE_SHAPE = (28, 28)
-HIDDEN_LAYER_NEURON_NUMBER = 20
+HIDDEN_LAYER_NEURON_NUMBER = 700
 TRAINING_SPEED = 0.50
-EPOCH_NUMBER = 1
+EPOCH_NUMBER = 5
 w1 = (2 * np.random.rand(HIDDEN_LAYER_NEURON_NUMBER, 784) - 1) / 10
 w2 = (2 * np.random.rand(10, HIDDEN_LAYER_NEURON_NUMBER) - 1) / 10
 b1 = (2 * np.random.rand(HIDDEN_LAYER_NEURON_NUMBER) - 1) / 10
 b2 = (2 * np.random.rand(10) - 1) / 10
 
 print("Load data from MNIST database")
-mndata = MNIST(r"D:\Projects\PycharmProjects\Perceptron\mnist")
+mndata = MNIST(os.getcwd()+"\\mnist")
 tr_images, tr_labels = mndata.load_training()
 test_images, test_labels = mndata.load_testing()
 
@@ -38,7 +39,7 @@ for epoch_number in range(EPOCH_NUMBER):
     print("Epoch number #", epoch_number + 1)
     TRAINING_SPEED -= 0.05
     for n in range(len(tr_images)):
-        if n % 10000 == 0:
+        if n % 1000 == 0:
             print("Training number:", n)
         img = tr_images[n]
         cls = tr_labels[n]
