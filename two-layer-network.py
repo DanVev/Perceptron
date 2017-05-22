@@ -13,7 +13,7 @@ b1 = (2 * np.random.rand(HIDDEN_LAYER_NEURON_NUMBER) - 1) / 10
 b2 = (2 * np.random.rand(10) - 1) / 10
 
 print("Load data from MNIST database")
-mndata = MNIST(os.getcwd()+"\\mnist")
+mndata = MNIST(os.getcwd() + "\\mnist")
 tr_images, tr_labels = mndata.load_training()
 test_images, test_labels = mndata.load_testing()
 
@@ -38,6 +38,9 @@ for epoch_number in range(EPOCH_NUMBER):
     print("--------------------------------------")
     print("Epoch number #", epoch_number + 1)
     TRAINING_SPEED -= 0.05
+
+    resp1 = np.zeros(HIDDEN_LAYER_NEURON_NUMBER, dtype=np.float32)
+    resp2 = np.zeros(10, dtype=np.float32)
     for n in range(len(tr_images)):
         if n % 1000 == 0:
             print("Training number:", n)
@@ -45,9 +48,6 @@ for epoch_number in range(EPOCH_NUMBER):
         cls = tr_labels[n]
 
         # forward propagation
-        resp1 = np.zeros(HIDDEN_LAYER_NEURON_NUMBER, dtype=np.float32)
-        resp2 = np.zeros(10, dtype=np.float32)
-
         # first layer
         for i in range(0, HIDDEN_LAYER_NEURON_NUMBER):
             r = w1[i] * img
@@ -62,8 +62,6 @@ for epoch_number in range(EPOCH_NUMBER):
 
         # class definition
         resp_cls = np.argmax(resp2)
-        # resp2 = np.zeros(10, dtype=np.float32)
-        # resp2[resp_cls] = 1.0
 
         # back propagation
         true_resp = np.zeros(10, dtype=np.float32)
@@ -103,7 +101,7 @@ def nn_calculate(img):
 total = len(test_images)
 valid = 0
 invalid = []
-
+pairs={}
 for i in range(0, total):
     img = test_images[i]
     predicted = nn_calculate(img)
@@ -112,7 +110,14 @@ for i in range(0, total):
         valid += 1
     else:
         invalid.append({"image": img, "predicted": predicted, "true": true})
+        pairs[(predicted, true)] = pairs.get((predicted, true), 0) + 1
 
 print("--------------------------------------")
 print("accuracy {}".format(valid / total))
-# print(invalid[:50])
+file = open(os.getcwd() + "\\errors.txt", "w")
+for string in invalid:
+    print(invalid, file=file)
+file.close()
+print("Errors number by digit pairs:")
+for pair, n in sorted(list(pairs.items()), key = lambda x:x[1], reverse = True):
+    print(pair, n)
